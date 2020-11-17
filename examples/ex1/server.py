@@ -20,7 +20,7 @@ server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
 calc_pb2_grpc.add_CalcServicer_to_server(CalcServicer(), server)
 
-server.add_insecure_port('[::]:50051')
+server.add_insecure_port('0.0.0.0:50051')
 server.start()
 
 try:
