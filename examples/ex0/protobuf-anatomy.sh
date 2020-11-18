@@ -55,4 +55,5 @@ if [ ! -d build ]; then
 fi
 
 make -C build >/dev/null
+clear
 ./build/protobuf-anatomy

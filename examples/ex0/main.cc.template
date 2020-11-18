@@ -25,18 +25,18 @@ main(int argc, char **argv)
     msg.set_data(<<__VALUE__>>);
 
     auto json = msg_jsonify(msg);
-    std::cout << "Message data:" << std::endl
-              << "-------------" << std::endl
+    std::cout << "\033[1mMessage data\033[0m" << std::endl
+              << "------------" << std::endl
               << msg.DebugString()
               << " - Disk size: " << msg.ByteSizeLong() << " bytes"
               << std::endl << std::endl;
 
-    std::cout << "JSON equivalent:" << std::endl
-              << "----------------" << std::endl
+    std::cout << "\033[1mJSON equivalent\033[0m" << std::endl
+              << "---------------" << std::endl
               << json << std::endl
               << " - Disk size: " << json.size() << " bytes" << std::endl << std::endl;
 
-    std::cout << "Raw data (serialized):" << std::endl
+    std::cout << "\033[1mRaw data (serialized)\033[0m" << std::endl
               << "----------------------" << std::endl
               << to_hex_listing(msg_serialize(msg)) << std::endl;
 
