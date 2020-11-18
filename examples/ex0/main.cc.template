@@ -47,14 +47,20 @@ main(int argc, char **argv)
 std::string
 to_hex_listing(const std::vector<uint8_t>& bytes, bool header)
 {
+    const auto spacer = "    ";
     auto ss = std::stringstream {};
     if (header) {
-        ss << "DEC\tHEX \tBIN" << std::endl;
+        ss << "DEC" << spacer << "HEX " << spacer << "BIN     " << spacer << "ASCII" << std::endl;
     }
     for (auto e: bytes) {
+        auto ascii = std::string {};
+        if (std::isgraph(e)) {
+            ascii.push_back(e);
+        }
         ss << std::dec << std::setfill(' ') << std::setw(3) << (unsigned)e
-           << "\t" << "0x" << std::hex << std::setfill('0') << std::setw(2) << (unsigned)e
-           << "\t" << to_bitstring(e, "") << std::endl;
+           << spacer << "0x" << std::hex << std::setfill('0') << std::setw(2) << (unsigned)e
+           << spacer << to_bitstring(e, "")
+           << spacer << ascii << std::endl;
     }
     return ss.str();
 }
