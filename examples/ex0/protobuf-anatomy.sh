@@ -40,7 +40,7 @@ sed 's/<<__WIRETYPE__>>/'"$wiretype"'/g' ./simple.proto.template |
     sed 's/<<__FIELDID__>>/'"$fieldid"'/g' > simple.proto
 
 if [ "$wiretype" = "string" ]; then
-    # quote quotation marks
+    # add outer quotation marks and quote inner quotation marks
     value="$(echo "$value" | sed 's:":\\\\":g')"
     sed 's/<<__VALUE__>>/"'"${value}"'"/g' ./main.cc.template > main.cc
 else
