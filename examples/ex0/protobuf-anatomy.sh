@@ -1,19 +1,23 @@
 #!/usr/bin/env zsh
 
-if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    printf "Usage: $0 [--wiretype TYPE] [--value VALUE] [--fieldid ID]\n"
-    exit 0
-fi
-
-set -e
 cd ${0:A:h}
 
-if [ ! -d build ]; then
-    mkdir -p build
-    cd build
-    cmake ..
-    cd ..
-fi
+case "$1" in
+--help|-h)
+    cat <<EOF
+Usage:
+  $0 [--wiretype TYPE] [--value VALUE] [--fieldid ID]
+  $0 clean
+  $0 --help | -h
+EOF
+    exit 0
+    ;;
+clean)
+    rm -r build main.cc simple.proto
+    exit 0
+    ;;
+esac
+set -e
 
 # Parse args
 wiretype=${wiretype:-int32}
@@ -41,6 +45,13 @@ if [ "$wiretype" = "string" ]; then
     sed 's/<<__VALUE__>>/"'"${value}"'"/g' ./main.cc.template > main.cc
 else
     sed 's/<<__VALUE__>>/'"${value}"'/g' ./main.cc.template > main.cc
+fi
+
+if [ ! -d build ]; then
+    mkdir -p build
+    cd build
+    cmake ..
+    cd ..
 fi
 
 make -C build >/dev/null
