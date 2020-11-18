@@ -40,10 +40,12 @@ main(int argc, char **argv)
               << "----------------------" << std::endl
               << to_hex_listing(msg_serialize(msg)) << std::endl;
 
-
     ShutdownProtobufLibrary();
 }
 
+/*
+ * Pretty print array of bytes
+ */
 std::string
 to_hex_listing(const std::vector<uint8_t>& bytes, bool header)
 {
@@ -65,6 +67,9 @@ to_hex_listing(const std::vector<uint8_t>& bytes, bool header)
     return ss.str();
 }
 
+/*
+ * Pretty print a byte
+ */
 std::string
 to_bitstring(uint8_t x, const std::string& nibble_sep)
 {
@@ -79,6 +84,9 @@ to_bitstring(uint8_t x, const std::string& nibble_sep)
     return ss.str();
 }
 
+/*
+ * Return serialized data
+ */
 std::vector<uint8_t>
 msg_serialize(const google::protobuf::Message& msg)
 {
