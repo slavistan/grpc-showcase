@@ -2,4 +2,5 @@
 
 cd "${0:A:h}"
 
-python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. ./calc.proto
+protoc --python_out=./proto ./calc.proto
+protoc --grpc_python_out=./proto ./calc.proto

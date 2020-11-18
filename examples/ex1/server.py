@@ -3,13 +3,13 @@ from concurrent import futures
 import grpc
 import time
 
-import calc_pb2 # generated
-import calc_pb2_grpc # generated
+from proto import calc_pb2
+from proto import calc_pb2_grpc
 
 import calc
 
 
-# Specify procedures to expose ("services")
+# Specify subset of procedures to expose ("services")
 class CalcServicer(calc_pb2_grpc.CalcServicer):
     def SquareRoot(self, request, context):
         response = calc_pb2.Number()

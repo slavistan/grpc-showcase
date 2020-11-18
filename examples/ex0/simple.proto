@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package foo;
-
-message SimpleMessage {
-    int64 a = 1;
-}
-

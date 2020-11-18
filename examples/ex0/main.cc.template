@@ -1,6 +1,5 @@
 #include <iostream>
 #include <iomanip>
-#include <cstdio>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -8,9 +7,9 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/util/json_util.h>
 
-#include "simple.pb.h"
+#include "simple.pb.h" /* resides in build directory */
 
-std::string to_hex_listing(const std::vector<uint8_t>&);
+std::string to_hex_listing(const std::vector<uint8_t>& bytes, bool header = true);
 std::string to_bitstring(uint8_t x, const std::string& nibble_sep = " ");
 std::vector<uint8_t> msg_serialize(const google::protobuf::Message& msg);
 std::string msg_jsonify(const google::protobuf::Message& msg);
@@ -22,28 +21,40 @@ main(int argc, char **argv)
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-    auto msg = foo::SimpleMessage {};
-    msg.set_a(16384);
-    std::cout << msg.DebugString();
-
-    std::cout << "ByteSizeLong(): " << msg.ByteSizeLong() << std::endl;
-
-    std::cout << to_hex_listing(msg_serialize(msg));
+    auto msg = grpctest::SimpleMessage {};
+    msg.set_data(<<__VALUE__>>);
 
     auto json = msg_jsonify(msg);
-    std::cout << "Compact JSON:\n" << json << std::endl;
+    std::cout << "Message data:" << std::endl
+              << "-------------" << std::endl
+              << msg.DebugString()
+              << " - Disk size: " << msg.ByteSizeLong() << " bytes"
+              << std::endl << std::endl;
 
-    std::cout << "Size JSON = " << json.size() << ", Protobuf = " << msg.ByteSizeLong() << std::endl;
+    std::cout << "JSON equivalent:" << std::endl
+              << "----------------" << std::endl
+              << json << std::endl
+              << " - Disk size: " << json.size() << " bytes" << std::endl << std::endl;
+
+    std::cout << "Raw data (serialized):" << std::endl
+              << "----------------------" << std::endl
+              << to_hex_listing(msg_serialize(msg)) << std::endl;
+
 
     ShutdownProtobufLibrary();
 }
 
 std::string
-to_hex_listing(const std::vector<uint8_t>& bytes)
+to_hex_listing(const std::vector<uint8_t>& bytes, bool header)
 {
     auto ss = std::stringstream {};
+    if (header) {
+        ss << "DEC\tHEX \tBIN" << std::endl;
+    }
     for (auto e: bytes) {
-        ss << "0x" << std::hex << std::right << std::setfill('0') << std::setw(2) << (unsigned)e << "\t" << to_bitstring(e) << std::endl;
+        ss << std::dec << std::setfill(' ') << std::setw(3) << (unsigned)e
+           << "\t" << "0x" << std::hex << std::setfill('0') << std::setw(2) << (unsigned)e
+           << "\t" << to_bitstring(e, "") << std::endl;
     }
     return ss.str();
 }

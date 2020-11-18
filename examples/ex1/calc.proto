@@ -1,11 +1,16 @@
 syntax = "proto3";
 
-
 message Number {
-    float value = 1;
+    float value = 1; /* The value to behold */
+}
+
+message Word {
+    string value = 1;
 }
 
 
+/* Calculator Service; gRPC-relevant */
 service Calc {
-    rpc SquareRoot(Number) returns (Number) {}
+    rpc SquareRoot(Number) returns (Number) {};
+    rpc Mirror(Word) returns (Word) {};
 }

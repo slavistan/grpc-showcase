@@ -22,5 +22,6 @@ add_custom_target(compile-proto
 
 add_executable(protobuf-anatomy main.cc ${PROJECT_BINARY_DIR}/simple.pb.cc)
 target_link_libraries(protobuf-anatomy ${PROTOBUF_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
-target_include_directories(protobuf-anatomy PRIVATE ${PROJECT_BINARY_DIR})
+target_include_directories(protobuf-anatomy
+    PRIVATE ${PROJECT_BINARY_DIR})
 add_dependencies(protobuf-anatomy compile-proto)
