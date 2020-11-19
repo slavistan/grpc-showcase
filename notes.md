@@ -24,6 +24,8 @@ Protobuf Kodierung: Viel Bitgeschubse; sehr effiziente Operationen
 
 Behandeln:
 
+- Wozu wire type? (Unbekannte IDs, erweitertes Protokoll)
+
 - Generierter, sprachenspezifischer Code https://developers.google.com/protocol-buffers/docs/reference/overview
 - Message vs. MessageLite --> Für lightweight Umgebung
 - Sonstiges Tooling (Json-Konversion, Debugging, ...)
