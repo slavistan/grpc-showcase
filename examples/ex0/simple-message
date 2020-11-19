@@ -1,0 +1,71 @@
+#!/usr/bin/env zsh
+
+cd ${0:A:h}
+
+case "$1" in
+--help|-h)
+	cat <<EOF
+Display information about a simple Protobuf message with a single field. The
+message's static parameters and the field's value can be set. Prints a debug
+string representation of the message, its JSON equivalent and a byte listing.
+
+The Protobuf message definition is generated from a template for every
+execution and is stored in 'simple.proto', based on which the Protobuf compiler
+is used to generate the c++ boilerplate. The program is (re)compiled and
+executed, displaying the messages information.
+
+Usage:
+  $0 [--type=TYPE] [--value=VALUE] [--id=ID]
+    Configure the field's wiretype, ID and value. Defaults are 'type = int32',
+    'value = 100' and 'id = 1'.
+
+  $0 clean
+    Clean working directory. Remove generated and temporary files.
+
+  $0 --help | -h
+    Display this help.
+EOF
+	exit 0
+	;;
+clean)
+	rm -r build main.cc simple.proto
+	exit 0
+	;;
+esac
+set -e
+
+# Parse args
+for var in "$@"; do
+	if [[ "$var" =~ ^--id= ]]; then
+		fieldid="${var:s/--id=//}"
+	elif [[ "$var" =~ ^--type= ]]; then
+		wiretype="${var:s/--type=//}"
+	elif [[ "$var" =~ ^--value= ]]; then
+		value="${var:s/--value=//}"
+	fi
+done
+wiretype=${wiretype:-int32}
+fieldid=${fieldid:-1}
+value=${value:-100}
+
+# Substitute type, id and value in template files.
+sed 's/<<__WIRETYPE__>>/'"$wiretype"'/g' ./simple.proto.template |
+	sed 's/<<__FIELDID__>>/'"$fieldid"'/g' > simple.proto
+if [ "$wiretype" = "string" ]; then
+	# add outer quotation marks and quote inner quotation marks
+	value="$(echo "$value" | sed 's:":\\\\":g')"
+	sed 's/<<__VALUE__>>/"'"${value}"'"/g' ./main.cc.template > main.cc
+else
+	sed 's/<<__VALUE__>>/'"${value}"'/g' ./main.cc.template > main.cc
+fi
+
+if [ ! -d build ]; then
+	mkdir -p build
+	cd build
+	cmake ..
+	cd ..
+fi
+
+make -C build >/dev/null
+clear
+./build/protobuf-anatomy
