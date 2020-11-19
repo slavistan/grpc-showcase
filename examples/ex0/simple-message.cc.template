@@ -7,7 +7,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/util/json_util.h>
 
-#include "simple.pb.h" /* resides in build directory */
+#include "simple-message.pb.h" /* resides in build directory */
 
 std::string to_hex_listing(const std::vector<uint8_t>& bytes, bool header = true);
 std::string to_bitstring(uint8_t x, const std::string& nibble_sep = " ");

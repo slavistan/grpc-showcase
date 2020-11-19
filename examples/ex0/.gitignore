@@ -1,4 +1,4 @@
 build/
 .vscode/
-main.cc
-simple.proto
+simple-message.cc
+simple-message.proto

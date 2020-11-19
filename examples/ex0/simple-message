@@ -10,9 +10,9 @@ message's static parameters and the field's value can be set. Prints a debug
 string representation of the message, its JSON equivalent and a byte listing.
 
 The Protobuf message definition is generated from a template for every
-execution and is stored in 'simple.proto', based on which the Protobuf compiler
-is used to generate the c++ boilerplate. The program is (re)compiled and
-executed, displaying the messages information.
+execution and is stored in 'simple-message.proto', based on which the Protobuf
+compiler is used to generate the c++ boilerplate. The program is (re)compiled
+and executed, displaying the messages information.
 
 Usage:
   $0 [--type=TYPE] [--value=VALUE] [--id=ID]
@@ -28,7 +28,7 @@ EOF
 	exit 0
 	;;
 clean)
-	rm -r build main.cc simple.proto
+	rm -r build simple-message.cc simple-message.proto
 	exit 0
 	;;
 esac
@@ -52,14 +52,14 @@ fieldid=${fieldid:-1}
 value=${value:-100}
 
 # Substitute type, id and value in template files.
-sed 's/<<__WIRETYPE__>>/'"$wiretype"'/g' ./simple.proto.template |
-	sed 's/<<__FIELDID__>>/'"$fieldid"'/g' > simple.proto
+sed 's/<<__WIRETYPE__>>/'"$wiretype"'/g' ./simple-message.proto.template |
+	sed 's/<<__FIELDID__>>/'"$fieldid"'/g' > simple-message.proto
 if [ "$wiretype" = "string" ]; then
 	# add outer quotation marks and quote inner quotation marks
 	value="$(echo "$value" | sed 's:":\\\\":g')"
-	sed 's/<<__VALUE__>>/"'"${value}"'"/g' ./main.cc.template > main.cc
+	sed 's/<<__VALUE__>>/"'"${value}"'"/g' ./simple-message.cc.template > simple-message.cc
 else
-	sed 's/<<__VALUE__>>/'"${value}"'/g' ./main.cc.template > main.cc
+	sed 's/<<__VALUE__>>/'"${value}"'/g' ./simple-message.cc.template > simple-message.cc
 fi
 
 if [ ! -d build ]; then
@@ -71,4 +71,4 @@ fi
 
 make -C build >/dev/null
 clear
-./build/protobuf-anatomy
+./build/simple-message
