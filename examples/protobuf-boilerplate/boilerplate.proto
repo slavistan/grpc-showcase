@@ -1,0 +1,21 @@
+syntax = "proto3";
+package grpctest;
+
+message HourlySensorBatch {
+    uint64 sensorid = 1;
+    repeated float coords = 2;
+    uint32 hod = 4;
+    repeated int32 measurements = 9;
+    uint32 battery = 10;
+}
+
+message LogMessage {
+    HourlySensorBatch data = 1;
+    string comment = 2;
+    enum LogLevel {
+        INFO = 0;
+        WARNING = 1;
+        ERROR = 2;
+        FATAL = 3;
+    };
+}
