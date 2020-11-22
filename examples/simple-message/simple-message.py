@@ -19,9 +19,9 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpForm
 Inspect the binary structure of simple Protobuf messages containing a single
 data field. Depending on the type and field ID specification a Protobuf
 definition is generated from which Python boilerplate is compiled. A Protobuf
-message is generated its data field is intialized according to the value read
-from the command-line. The message's byte listing JSON-equivalent are printed
-to stdout.
+message is generated and its data field is intialized according to the value
+read from the command-line. The message's byte listing and JSON-equivalent are
+printed to stdout.
 
 Note: For some integer types the generated JSON-equivalent of a message
 erroneously wraps the values in quotation marks. This is an error in the Python

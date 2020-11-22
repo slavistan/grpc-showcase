@@ -4,7 +4,7 @@ Inspect the binary structure of simple Protobuf messages containing a single
 data field. Depending on the type and field ID specification a Protobuf
 definition is generated from which Python boilerplate is compiled. A Protobuf
 message is generated and its data field is intialized according to the value
-read from the command-line. The message's byte listing JSON-equivalent are
+read from the command-line. The message's byte listing and JSON-equivalent are
 printed to stdout.
 
 Exemplary output:
