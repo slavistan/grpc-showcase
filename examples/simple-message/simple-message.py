@@ -11,6 +11,9 @@ import sys
 ### Parse user input
 ###
 
+# TODO: Extend 'proto_types' to dict to use for all type associations.
+#       The current solution uses implementation details (internal type enums),
+#       which may or may not be stable.
 proto_types = ["double", "float", "int32", "int64", "uint32", "uint64", "sint32", "sint64",
     "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes"]
 
