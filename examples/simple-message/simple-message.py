@@ -23,8 +23,9 @@ message is generated its data field is intialized according to the value read
 from the command-line. The message's byte listing JSON-equivalent are printed
 to stdout.
 
-Note: For some integer types the generated JSON-equivalent of a message falsely
-quotes the values. The Protobuf message is unaffected by this.
+Note: For some integer types the generated JSON-equivalent of a message
+erroneously wraps the values in quotation marks. This is an error in the Python
+Protobuf library. The Protobuf message is unaffected by this.
 
 """,
     epilog="""Examples:
