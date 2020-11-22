@@ -1,4 +1,4 @@
-# Inspect binary structure of Protobuf messages
+# Inspect the binary structure of Protobuf messages
 
 **Usage**
 

@@ -3,16 +3,18 @@
 import argparse
 import google.protobuf.json_format
 import json
-import os
+from pathlib import Path
 import subprocess
 import sys
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(
+    description="Inspect the binary structure of simple Protobuf messages. TODO",
+    epilog="Usage Examples: TODO")
 parser.add_argument("-t", "--type", help="Field type; may use 'repeated'")
 parser.add_argument("-i", "--id", help="Field ID", default=1)
 parser.add_argument("-v", "--val", help="Field value(s)")
-parser.add_argument("--proto_out", help="Generated Protobuf output directory.", default=".")
-parser.add_argument("--python_out", help="Generated Python output directory", default=".")
+parser.add_argument("--proto_out", help="Output directory to contain generated Protobuf definitions. Will be created if necessary.", default=".")
+parser.add_argument("--python_out", help="Output directory to contain generated Python boilerplate. Will be created if necessary.", default=".")
 args = parser.parse_args()
 
 ###
@@ -27,15 +29,15 @@ protodecl = (
     f"    {args.type} data = {args.id};\n"
     f"}}\n"
 )
-os.system(f"mkdir -p {args.python_out}")
+Path(args.proto_out).mkdir(mode=0o755, parents=True, exist_ok=True)
 open(f"{args.proto_out}/simple-message.proto", "w").write(protodecl)
 
 ###
 ### Compile Protobuf and generate Python boilerplate
 ###
 
-os.system(f"mkdir -p {args.python_out}")
-cmd = subprocess.run(["protoc", f"--python_out={args.python_out}", f"{args.proto_out}/simple-message.proto"])
+Path(args.python_out).mkdir(mode=0o755, parents=True, exist_ok=True)
+cmd = subprocess.run(["protoc", f"--python_out={str(Path(args.python_out))}", f"{str(Path(args.proto_out) / Path('simple-message.proto'))}"])
 if cmd.returncode:
     sys.exit(f"protoc failed (return code {cmd.returncode}).")
 
@@ -82,7 +84,8 @@ else:
 ###
 
 ## Print JSON equivalent
-# BUG: JSON 64bit integer values get quoted. Same for MessageToDict()
+# BUG: 64bit integer values generate strings in Python. Same for MessageToJson().
+#      Serialized protobuf is correct, however.
 as_dict = google.protobuf.json_format.MessageToDict(msg)
 as_json = json.dumps(as_dict, separators=(',', ':'))
 numbytes_json = len(as_json)
@@ -101,8 +104,3 @@ for byte in msg.SerializeToString():
     print(f"{val:3}    0x{val:02x}    {val:08b}    {char}")
 
 # TODO: Usage help
-# TODO: Remove linux dependencies (mkdir etc)
-# TODO: Use python's protoc to reduce dependencies
-# TODO: Assert dependencies:
-#        - protobuf (+ protoc)
-#        - json, sys, python version
