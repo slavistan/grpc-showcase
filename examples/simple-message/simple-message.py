@@ -7,14 +7,51 @@ from pathlib import Path
 import subprocess
 import sys
 
-parser = argparse.ArgumentParser(
-    description="Inspect the binary structure of simple Protobuf messages. TODO",
-    epilog="Usage Examples: TODO")
-parser.add_argument("-t", "--type", help="Field type; may use 'repeated'")
-parser.add_argument("-i", "--id", help="Field ID", default=1)
-parser.add_argument("-v", "--val", help="Field value(s)")
-parser.add_argument("--proto_out", help="Output directory to contain generated Protobuf definitions. Will be created if necessary.", default=".")
-parser.add_argument("--python_out", help="Output directory to contain generated Python boilerplate. Will be created if necessary.", default=".")
+###
+### Parse user input
+###
+
+proto_types = ["double", "float", "int32", "int64", "uint32", "uint64", "sint32", "sint64",
+    "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes"]
+
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+    description="""\
+Inspect the binary structure of simple Protobuf messages containing a single
+data field. Depending on the type and field ID specification a Protobuf
+definition is generated from which Python boilerplate is compiled. A Protobuf
+message is generated its data field is intialized according to the value read
+from the command-line. The message's byte listing JSON-equivalent are printed
+to stdout.
+
+Note: For some integer types the generated JSON-equivalent of a message falsely
+quotes the values. The Protobuf message is unaffected by this.
+
+""",
+    epilog="""Examples:
+    python3 %(prog)s --type=uint32 --val=150
+    python3 %(prog)s --type=sint64 --val=-5512
+    python3 %(prog)s --type="repeated uint32" --val=1,2,3,4,5,6,7,8
+    python3 %(prog)s --type="repeated bytes" --val=0xBEEFAFFE,0xdead1337
+    python3 %(prog)s --type=string --val=Paris
+    python3 %(prog)s --type="repeated string" --val=UTF-8,2≠3
+""")
+parser.add_argument("--type",
+    choices=proto_types + [ "repeated "+t for t in proto_types ],
+    metavar="TYPE", # don't print all choices
+    help="Field type. May use the 'repeated' prefix.", required=True)
+parser.add_argument("--val", required=True,
+    help="Comma-separated field value(s). See examples for type-dependent representation.")
+parser.add_argument("--id", type=int, help="Field ID. Default: %(default)d.", default=1)
+parser.add_argument("--proto_out", default=".",
+    help="Output directory to contain generated Protobuf definition files. "
+        "Will be created if necessary. "
+        "Relative paths are based on the current working directory. "
+        "Default: '%(default)s'.")
+parser.add_argument("--python_out", default=".",
+    help="Output directory to contain generated Python boilerplate. "
+        "Will be created if necessary."
+        "Relative paths are based on the current working directory. "
+        "Default: '%(default)s'.")
 args = parser.parse_args()
 
 ###
@@ -37,7 +74,8 @@ open(f"{args.proto_out}/simple-message.proto", "w").write(protodecl)
 ###
 
 Path(args.python_out).mkdir(mode=0o755, parents=True, exist_ok=True)
-cmd = subprocess.run(["protoc", f"--python_out={str(Path(args.python_out))}", f"{str(Path(args.proto_out) / Path('simple-message.proto'))}"])
+cmd = subprocess.run(["protoc", f"--python_out={str(Path(args.python_out))}",
+    f"{str(Path(args.proto_out) / Path('simple-message.proto'))}"])
 if cmd.returncode:
     sys.exit(f"protoc failed (return code {cmd.returncode}).")
 
@@ -84,7 +122,7 @@ else:
 ###
 
 ## Print JSON equivalent
-# BUG: 64bit integer values generate strings in Python. Same for MessageToJson().
+# BUG: Somtimes integer values generate strings in Python. Same for MessageToJson().
 #      Serialized protobuf is correct, however.
 as_dict = google.protobuf.json_format.MessageToDict(msg)
 as_json = json.dumps(as_dict, separators=(',', ':'))
