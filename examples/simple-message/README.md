@@ -77,4 +77,5 @@ See `python3 simple-message.py --help`.
 **Dependencies**
 
 - `python3` ≥ v3.7.5
+- Python protobuf package ≥ v3.14.0
 - `protoc` ≥ v3.14.0
